@@ -1,3 +1,4 @@
+from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException, status, Depends, WebSocket, WebSocketDisconnect, Response
 from .. import schemas, models
 from ..database import get_db
@@ -6,7 +7,11 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from ..rpi_gpio_module import set_servo_angle
 from ..utilities import draw_boxes, color_sample
-from execution_manager import start_test_program, stop_test_program
+from execution_manager import (
+    start_test_program,
+    stop_test_program,
+    validate_demo_code,
+)
 import cv2
 import platform
 import asyncio
@@ -74,6 +79,14 @@ def run_code():
 @router.post('/terminate_code')
 def terminate_code():
     return stop_test_program()
+
+class CodeValidationRequest(BaseModel):
+    code: str
+
+
+@router.post('/validate_code')
+def validate_code(request: CodeValidationRequest):
+    return validate_demo_code(request.code)
 
 def update_servo_angles(db: Session, data: dict):
     channel = f"channel_{data['servo_channel']}"
