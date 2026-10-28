@@ -1,0 +1,66 @@
+.arm-indicator-container {
+  padding: 1rem;
+  width: auto;
+  border: 1px solid var(--primary-accent-dim);
+  border-radius: 12px;
+  background-color: var(--bg-from);
+}
+
+.arm-indicator-container .arm-indicator-angle {
+  margin-top: 0.6rem;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 120px;
+  grid-template-rows: repeat(3, 1.4rem);
+  column-gap: 2rem;
+}
+
+.arm-indicator-container .arm-indicator-angle > div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--custom-slider-color);
+}
+
+.arm-indicator-container .arm-indicator-angle > div .angle-indicator {
+  border-radius: 6px;
+  border: 1px solid var(--bg-outline);
+  position: relative;
+  width: 2rem;
+  height: 1.2rem;
+}
+
+.arm-indicator-container .arm-indicator-angle .angle-indicator .angle-bg {
+  padding: 0 0.6rem;
+  background-color: var(--custom-slider-color);
+  border: none;
+  border-radius: 6px;
+  opacity: 0.2;
+  width: 100%;
+  height: 100%;
+}
+
+.arm-indicator-container .arm-indicator-angle .angle-indicator .angle-text {
+  opacity: 1;
+  font-size: 0.75rem;
+  color: var(--custom-slider-color);
+  position: absolute;
+  top: 0.2rem;
+  left: 0.55rem;
+}
+
+.arm-indicator-title-icon {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.arm-indicator-icon {
+  font-size: 1.2rem;
+  color: var(--primary-button);
+}

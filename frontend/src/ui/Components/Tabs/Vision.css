@@ -1,0 +1,105 @@
+.vision-main-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.vision-content-container {
+    padding: 1rem 2.4rem;
+    flex-grow: 1;
+    max-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.vision-content-container.scrollable {
+  overflow-y: scroll;
+}
+
+.vision-content-container.scrollable::-webkit-scrollbar {
+  width: 22px;
+}
+
+.vision-content-container.scrollable::-webkit-scrollbar-thumb {
+  background-color: var(--text-input-hint);
+  border-radius: 12px;
+  border: 3px solid var(--bg-to);
+  margin-right: 4px;
+  border: 5px solid var(--bg-to);
+}
+
+.vision-feed-container {
+    background-color: black;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.vision-feed-container header {
+    padding: 1rem;
+    background-color: var(--bg-body);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    border-radius: 12px 12px 0 0;
+}
+
+.vision-feed-container
+.vision-start-btn {
+    padding: 0.75rem;
+    border: 1px solid var(--bg-outline);
+    border-radius: 12px;
+    font-weight: bold;
+    color: var(--online-accent);
+    background-color: var(--online-button-bg-dim);
+    transition-property: opacity;
+    transition-duration: 180ms;
+}
+
+.vision-feed-container
+.vision-stop-btn {
+    padding: 0.75rem;
+    border: 1px solid var(--bg-outline);
+    border-radius: 12px;
+    font-weight: bold;
+    color: var(--offline-accent);
+    background-color: var(--offline-button-bg-dim);
+    transition-property: opacity;
+    transition-duration: 180ms;
+}
+
+.vision-feed-container
+button:hover {
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+.vision-feed-container
+.vision-camera-feed {
+    height: 310px;
+    display: grid;
+    place-content: center;
+    text-align: center;
+}
+
+.vision-select-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem
+}
+
+.vision-select-container label {
+    font-size: 0.9rem;
+}
+
+.vision-select-container select {
+    padding: 0.7rem;
+    border: 1px solid var(--bg-outline);
+    border-radius: 12px;
+    background-color: var(--bg-body);
+    font: inherit;
+    font-size: 0.85rem;
+    color: var(--text-general);
+}

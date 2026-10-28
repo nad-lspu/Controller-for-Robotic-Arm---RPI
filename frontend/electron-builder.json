@@ -1,0 +1,22 @@
+{
+    "appId": "com.albertdevilla.roboticarmcontroller",
+    "files": ["dist-react", "dist-electron"],
+    "icon": "./src/assets/hero.png",
+    "extraResources": ["dist-electron/preload.cjs", 
+        {
+            "from": "../backend",
+            "to": "backend",
+            "filter": ["**/*"]
+        }
+    ],
+    "win": {
+        "target": ["portable", "msi"]
+    },
+    "linux": {
+        "target": "AppImage",
+        "category": "Education"
+    },
+    "mac": {
+        "target": "dmg"
+    }
+}

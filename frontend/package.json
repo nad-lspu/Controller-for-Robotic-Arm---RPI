@@ -1,0 +1,48 @@
+{
+  "name": "rpi-robotic-arm-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "dist-electron/main.js",
+  "scripts": {
+    "dev": "npm-run-all --parallel dev:react dev:electron",
+    "dev:react": "vite",
+    "dev:electron": "npm run transpile:electron && cross-env NODE_RUN_MODE=development electron .",
+    "build": "tsc -b && vite build",
+    "transpile:electron": "tsc --project src/electron/tsconfig.json",
+    "build:electron": "npm run transpile:electron && npm run build",
+    "dist:win": "npm run build:electron && electron-builder --win --x64",
+    "dist:linux": "npm run build:electron && electron-builder --linux --x64",
+    "dist:mac": "npm run build:electron && electron-builder --mac --arm64",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-icons": "^5.6.0",
+    "react-router-dom": "^7.14.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@types/node": "^24.12.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.0",
+    "cross-env": "^10.1.0",
+    "electron": "^41.0.2",
+    "electron-builder": "^26.8.1",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.4.0",
+    "npm-run-all": "^4.1.5",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.56.1",
+    "vite": "^8.0.0"
+  },
+  "overrides": {
+    "yauzl": "^3.2.1"
+  }
+}

@@ -1,0 +1,43 @@
+.controller-main-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.controller-panel-section {
+  padding: 1.5rem 2.4rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  max-height: 100vh;
+  gap: 1rem;
+}
+
+.controller-panel-section.scrollable {
+  overflow-y: scroll;
+}
+
+.controller-panel-section.scrollable::-webkit-scrollbar {
+  width: 22px;
+}
+
+.controller-panel-section.scrollable::-webkit-scrollbar-thumb {
+  background-color: var(--text-input-hint);
+  border-radius: 12px;
+  border: 3px solid var(--bg-to);
+  margin-right: 4px;
+  border: 5px solid var(--bg-to);
+}
+
+.controller-panel-section h2 {
+  font-weight: normal;
+  font-size: 1rem;
+}
+
+.controller-main-loading {
+  width: auto;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

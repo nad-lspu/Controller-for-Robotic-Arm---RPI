@@ -1,0 +1,43 @@
+.nav-drawer-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    gap: 0.3rem;
+    width: 100%;
+}
+
+.nav-drawer-menu 
+.nav-drawer-item {
+    padding: 0.7rem;
+    width: 100%;
+    text-align: start;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 12px;
+    gap: 1rem;
+    transition-property: background-color, box-shadow;
+    transition-duration: 150ms;
+    transition-timing-function: ease-in-out;
+    font-size: 0.9rem;
+}
+
+.nav-drawer-menu 
+.nav-drawer-item:hover {
+    background-color: var(--nav-drawer-item-hover);
+    cursor: pointer;
+}
+
+.nav-drawer-menu
+.nav-drawer-item.nav-active {
+    background-color: var(--nav-drawer-item-active);
+    box-shadow: var(--shadow-light);
+}
+
+.nav-drawer-menu 
+.nav-drawer-item 
+.nav-drawer-item-icon {
+    font-size: 1.4rem;
+    vertical-align: middle;
+}

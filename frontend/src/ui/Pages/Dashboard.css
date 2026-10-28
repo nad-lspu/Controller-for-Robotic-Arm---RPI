@@ -1,0 +1,252 @@
+.dashboard-container {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.nav-drawer {
+  background-color: var(--bg-body);
+  padding: 1rem 1rem 1rem 2rem;
+  border-radius: 0px 12px 12px 0px;
+  border: 1px solid var(--bg-outline);
+  min-width: 25vw;
+  max-width: 25vw;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.content-window {
+  flex-grow: 1;
+  height: 100vh;
+}
+
+.nav-drawer header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: start;
+}
+
+.nav-drawer header .app-logo {
+  font-size: 2rem;
+  text-shadow: var(--text-shadow);
+}
+
+.nav-drawer header h1 {
+  text-transform: uppercase;
+  letter-spacing: 0.2rem;
+  font-size: 0.85rem;
+  text-shadow: var(--text-shadow);
+  margin-left: 0.3rem;
+  margin-top: 0.3rem;
+}
+
+.nav-drawer .search-box-container {
+  width: 100%;
+  position: relative;
+  margin-block: 1rem;
+}
+
+.nav-drawer .search-box-container .search-icon {
+  font-size: 1.1rem;
+  position: absolute;
+  top: 8px;
+  left: 0.5rem;
+}
+
+.nav-drawer .search-box-container input {
+  background-color: var(--bg-input);
+  border: 1px solid var(--search-box-outline);
+  padding: 0.5rem 0.5rem 0.5rem 1.8rem;
+  border-radius: 12px;
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--text-general);
+  box-shadow: var(--shadow-light);
+}
+
+.nav-drawer .search-box-container input::placeholder {
+  color: var(--text-general);
+}
+
+.nav-drawer .search-box-container input:focus,
+.nav-drawer .search-box-container input:focus-visible {
+  outline: none;
+  border: 2px solid var(--text-highlight);
+}
+
+.user-info-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 2px solid var(--bg-outline);
+  padding: 1rem;
+  gap: 5px;
+}
+
+.user-info-container img {
+  border-radius: 50%;
+}
+
+.user-info-container div {
+  font-size: 0.65rem;
+}
+
+.user-info-container div h3 {
+  font-weight: bold;
+  color: var(--text-general);
+}
+
+.user-info-container div p {
+  letter-spacing: 1px;
+  color: var(--text-input-hint);
+}
+
+.user-info-container .user-more {
+  font-size: 1.4rem;
+  vertical-align: middle;
+  padding: 4px;
+  border-radius: 50%;
+  transition-property: background-color;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in-out;
+}
+
+.user-info-container .user-more:hover {
+  background-color: var(--bg-outline);
+  cursor: pointer;
+}
+
+.user-info-container .user-more-container {
+  position: relative;
+}
+
+.log-out-button {
+  position: absolute;
+  top: -55px;
+  right: -70px;
+  padding: 0.8rem;
+  border: 1px solid var(--bg-outline);
+  border-radius: 12px;
+  background-color: var(--bg-body);
+  color: var(--offline-accent);
+  font-weight: bold;
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-light);
+  min-width: 150px;
+  z-index: 20;
+  transition:
+    background-color 150ms ease-in-out,
+    opacity 150ms ease-in-out,
+    transform 150ms ease-in-out;
+}
+
+.log-out-button:hover {
+  cursor: pointer;
+  background-color: var(--bg-outline);
+}
+
+.log-out-button.hide {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(0.5rem);
+}
+
+.log-out-button .log-out-button-icon {
+  vertical-align: middle;
+  font-size: 1.3rem;
+}
+
+.log-out-prompt-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: grid;
+  place-content: center;
+  z-index: 25;
+  animation: dialog-fade-in 150ms ease-in-out;
+}
+
+.log-out-prompt-bg .log-out-prompt-container {
+  height: 180px;
+  width: 300px;
+  background-color: var(--bg-body);
+  border: 1px solid var(--bg-outline);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  display: grid;
+  place-content: center;
+  gap: 20px;
+}
+
+.log-out-prompt-bg .log-out-prompt-container h2 {
+  font-size: 1.3rem;
+  text-align: center;
+}
+
+.log-out-prompt-bg .log-out-prompt-container p {
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.log-out-prompt-bg .log-out-prompt-container div {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.log-out-prompt-bg .log-out-prompt-container div .yes-button {
+  font: inherit;
+  font-size: 0.8ren;
+  text-transform: uppercase;
+  border-radius: 12px;
+  border: none;
+  color: var(--text-general);
+  font-weight: bold;
+  padding: 0.8rem;
+  width: 100px;
+  background-color: var(--primary-button);
+}
+
+.log-out-prompt-bg .log-out-prompt-container div .no-button {
+  font: inherit;
+  font-size: 0.8ren;
+  text-transform: uppercase;
+  border-radius: 12px;
+  border: none;
+  color: var(--text-general);
+  font-weight: bold;
+  padding: 0.8rem;
+  width: 100px;
+  background-color: var(--bg-outline);
+}
+
+.log-out-prompt-bg .log-out-prompt-container div button {
+  transition: opacity 150ms ease-in-out;
+  cursor: pointer;
+}
+
+.log-out-prompt-bg .log-out-prompt-container div button:hover {
+  opacity: 0.5;
+}
+
+@keyframes dialog-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(0.5rem);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

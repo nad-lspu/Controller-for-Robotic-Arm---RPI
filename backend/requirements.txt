@@ -1,0 +1,6 @@
+passlib
+bcrypt==3.2.0
+python-jose[cryptography]
+sqlalchemy
+fastapi[all]
+opencv-python

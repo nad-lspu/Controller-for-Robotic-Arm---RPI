@@ -1,0 +1,62 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  /* TEXT COLORS */
+  --text-heading: #ffffff;
+  --text-general: #d6d6d6;
+  --text-online: #10b67f;
+  --text-black: #000000;
+  --text-offline: #fe9494;
+  --text-highlight: #60a5fa;
+  --text-input-hint: #94a3b8;
+
+  /* BACKGROUND COLORS */
+  --bg-from: #0f172a;
+  --bg-to: #2b3750;
+  --bg: linear-gradient(45deg, var(--bg-from), var(--bg-to));
+  --bg-outline: #333f52;
+  --bg-body: #1d283a;
+  --bg-input: #293548;
+  --bg-heading: #21314c;
+  --bg-body-dim: #0f172a80;
+
+  /* BUTTON & ACCENT COLORS */
+  --primary-button: #4f78f6;
+  --online-accent: #10b67f;
+  --online-button-bg-dim: #10b67f38;
+  --offline-accent: #ef4444;
+  --offline-button-bg-dim: #ef444438;
+  --online-accent-dim: #10b67f81;
+  --primary-accent-dim: #4f79f67e;
+
+  /* NAV DRAWER COLORS */
+  --nav-drawer-item-hover: #21314c;
+  --search-box-outline: #d6d6d6;
+  --nav-drawer-item-active: #4f78f6;
+
+  --shadow: 0 1.5rem 1rem 10px rgb(0, 0, 0, 0.25);
+  --shadow-light: 0 0.8rem 12px 2px rgb(0, 0, 0, 0.25);
+  --text-shadow: 0 3px 5px rgb(0, 0, 0, 0.5);
+
+  /* CONTROLLER COLORS */
+  --slider-blue: #4f78f6;
+  --slider-green: #10b67f;
+  --slider-red: #ef4444;
+  --slider-purple: #ae4ff6;
+  --slider-yellow: #f6e34f;
+  --slider-magenta: #b6108c;
+  --slider-orange: #f6894f;
+}
+
+html {
+  font-family: Inter, Arial, Calibri;
+  font-size: 1rem;
+  color: var(--text-general);
+  background: var(--bg);
+  min-height: 100vh;
+  height: 100vh;
+}
