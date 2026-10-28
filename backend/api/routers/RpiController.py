@@ -11,6 +11,7 @@ from execution_manager import (
     start_test_program,
     stop_test_program,
     validate_demo_code,
+    execute_demo_code,
 )
 import cv2
 import platform
@@ -87,6 +88,10 @@ class CodeValidationRequest(BaseModel):
 @router.post('/validate_code')
 def validate_code(request: CodeValidationRequest):
     return validate_demo_code(request.code)
+
+@router.post('/execute_demo_code')
+def execute_demo(request: CodeValidationRequest):
+    return execute_demo_code(request.code)
 
 def update_servo_angles(db: Session, data: dict):
     channel = f"channel_{data['servo_channel']}"

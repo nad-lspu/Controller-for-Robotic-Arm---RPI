@@ -90,3 +90,32 @@ def validate_demo_code(code: str):
             }
 
     return {"valid": True, "message": "Demo code accepted."}
+
+def execute_demo_code(code: str):
+    """
+    Interpret validated literal print statements without
+    executing the submitted Python source code.
+    """
+    validation = validate_demo_code(code)
+
+    if not validation["valid"]:
+        return {
+            "success": False,
+            "message": validation["message"],
+            "output": "",
+        }
+
+    tree = ast.parse(code)
+    output_lines = []
+
+    for statement in tree.body:
+        call = statement.value
+
+        values = [str(arg.value) for arg in call.args]
+        output_lines.append(" ".join(values))
+
+    return {
+        "success": True,
+        "message": "Demo code executed successfully.",
+        "output": "\n".join(output_lines),
+    }
