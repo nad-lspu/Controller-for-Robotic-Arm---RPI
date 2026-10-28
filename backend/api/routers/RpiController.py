@@ -12,6 +12,7 @@ from execution_manager import (
     stop_test_program,
     validate_demo_code,
     execute_demo_code,
+    get_test_program_output,
 )
 import cv2
 import platform
@@ -83,7 +84,10 @@ def terminate_code():
 
 class CodeValidationRequest(BaseModel):
     code: str
-
+    
+@router.get('/program_output')
+def program_output():
+    return get_test_program_output()
 
 @router.post('/validate_code')
 def validate_code(request: CodeValidationRequest):
