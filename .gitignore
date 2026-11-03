@@ -41,3 +41,17 @@ runs/
 # Trained machine-learning model weights
 *.onnx
 *.pt
+
+# Node.js dependencies
+node_modules/
+
+# Frontend build outputs
+dist/
+dist-electron/
+out/
+
+# Electron packaging outputs
+release/
+
+# Vite cache
+.vite/
