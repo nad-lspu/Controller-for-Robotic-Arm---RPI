@@ -1,6 +1,6 @@
 # TRACE Testing Guide para sa Groupmates (Taglish)
 
-**Version:** Draft 2 — November 3, 2026  
+**Version:** Draft 3 — November 3, 2026  
 **Setup:** Windows PC + VS Code + PowerShell  
 **Goal:** Ma-try ninyo mismo ang TRACE Laboratory at Controller, then i-record kung ano ang gumagana at kung ano ang may error.
 
@@ -80,27 +80,59 @@ py -3.12 -m venv .venv
 
 **Expected:** Dependencies install successfully. First install can take a while. If `py -3.12` is not found, check `py --list` and ask the maintainer before switching Python versions.
 
-### Step 6 — Set up local `.env` (required)
+### Step 6 — Create your own local `.env` (configuration file)
 
-**Stop here kung wala pa kayong approved test `.env` configuration.** Laboratory needs database, authentication, storage, and email settings to start. Ask the project maintainer for **safe local development values via private channel**. Do **not** copy production credentials and do **not** commit `.env` to GitHub.
+Guys, ito yung settings file ng backend. **Hindi ito account creation**; dito naka-set kung saan ang database at paano gumagana ang login, email, at storage.
 
-The `.env` file belongs in `Laboratory-for-Robotic-Arm\backend\.env`. The backend expects settings such as `DATABASE_URL`, `SECRET_KEY`, `ALGORITHM`, token expiry, model storage configuration, and TRACE email settings. Exact safe first-time configuration is still pending maintainer verification.
-
-**Huwag i-uncomment ang `initial_super_admin_setup()` at huwag gamitin ang historical default password.**
-
-### Step 7 — Run Laboratory backend
-
-Stay inside the `backend` folder:
+1. Make sure nasa `backend` folder pa rin ang Terminal 1.
+2. Check kung kasama na sa cloned repository ang `backend/.env.example`:
 
 ```powershell
-.\.venv\Scripts\python.exe -m uvicorn api.main:app --host 127.0.0.1 --port 8000 --reload
+Test-Path .\.env.example
 ```
 
-**Expected:** May Uvicorn running message. Keep this terminal open. Sa browser, visit:
+3. Kapag `True`, copy it:
 
-http://127.0.0.1:8000/
+```powershell
+Copy-Item .\.env.example .\.env
+code .\.env
+```
 
-**Expected:** JSON with `Health Check Complete`. If may error, record it and mark `ENV-01 = FAIL` or `BLOCKED`.
+Kapag `False`, **stop muna and ask the maintainer to commit the reviewed `.env.example`**. Huwag mag-imbento ng credentials.
+
+4. Generate a **unique local** authentication secret in PowerShell:
+
+```powershell
+$bytes = New-Object byte[] 32
+[System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
+[Convert]::ToBase64String($bytes)
+```
+
+Copy the generated string into `SECRET_KEY=` inside your own `.env`. **Do not send this secret to anyone.**
+
+5. For the initial SQLite setup, the template uses `DATABASE_URL=sqlite:///./robotic_arm.db`. Keep that value when following this guide. The database is local to your own computer, so accounts created on another computer won't automatically appear here.
+
+6. The email and model-storage values in `.env.example` are **placeholders only**. They are not working SMTP or cloud credentials. Basic backend startup may work with placeholders, but **email verification, password recovery, and storage operations may fail**. Do not use real personal/production secrets just to pass this test. Ask the maintainer before testing those features.
+
+7. Save `.env` with **Ctrl+S**. Never commit `.env`, send it to the group chat, or restore the historical default Admin password. Do not uncomment `initial_super_admin_setup()`.
+
+**Expected:** May sariling `backend/.env` ka na. This is a **setup template**, not yet a fully verified clean-install configuration. If startup fails, screenshot only the error without secrets and report `ENV-01 = BLOCKED`.
+
+### Step 7 — Start the Laboratory application (recommended: Electron handles its backend)
+
+**Important:** Sa actual testing natin, `npm run dev` tried to start FastAPI automatically. If you manually start Uvicorn on port `8000` *and then* run `npm run dev`, magkakaroon ng `Errno 10048 / address already in use`.
+
+So **don't manually run Laboratory Uvicorn** for the normal desktop test. Leave Terminal 1 free after dependency installation. We'll start the desktop app in Step 11, and Electron will attempt to launch the backend.
+
+After Step 11, check http://127.0.0.1:8000/ in your browser. **Expected:** `Health Check Complete`. If unreachable, check the `npm run dev` terminal and report the error; don't start random duplicate servers.
+
+**Optional API-only testing:** If you are *not* running Electron, you can start Laboratory manually from the `backend` folder using:
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn api.main:app --host 127.0.0.1 --port 8000
+```
+
+Stop it with **Ctrl+C before launching `npm run dev`**.
 
 ## PART 3 — Start TRACE Controller backend (Terminal 2)
 
@@ -144,56 +176,89 @@ npm run dev
 
 **Expected:** Development server/Electron starts. Follow the local address shown in the terminal or the Electron window. Keep this terminal open too.
 
-**Reminder:** Dapat sabay-sabay running ang **Laboratory backend (8000)**, **Controller backend (8001)**, at **Laboratory frontend**. Current Programming integration uses `127.0.0.1:8001`, so same-PC setup muna tayo.
+**Reminder:** Dapat running ang **Laboratory backend (8000, launched by Electron)**, **Controller backend (8001)**, at **Laboratory frontend**. Current Programming integration uses `127.0.0.1:8001`, so same-PC setup muna tayo. Huwag mag-start ng separate Laboratory backend kapag Electron na ang nag-launch nito.
 
-## PART 5 — Test accounts: Admin, Professor, Student
+## PART 5 — Create a Student test account, then test logins
 
-> **Before testing:** Ask the maintainer for approved **test accounts** for each role. We have verified that the old default super-admin account was *not* present in the configured local database, but we have **not yet verified a complete first-time admin/student provisioning procedure**. Don't make up an account or reuse the historical password.
+> **Guys, dito natin gagamitin yung `127.0.0.1:8000/docs` na ginamit natin sa testing.** This is FastAPI's Swagger UI. It can send requests to the running backend. **Hindi ito `.env` editor.** Dapat working na ang backend bago ito buksan.
+>
+> **Security note:** Current `POST /auth/create` has no visible authorization check and its schema accepts `student`, `professor`, and `admin`. This is a known security issue pending a code fix. **Use only `student` in this guide; do not use this endpoint to create privileged accounts.** Use local test data only, and don't expose port 8000 publicly.
 
-### Step 12 — Test Admin login (AUTH-ADMIN-01)
+### Step 12 — Open Swagger UI (AUTH-API-01)
 
-1. Sa TRACE Laboratory window, find the **Sign In** page.
-2. Enter the **provided Admin test email and password**.
+1. Make sure the TRACE desktop app is running and http://127.0.0.1:8000/ shows `Health Check Complete`.
+2. Open **Chrome/Edge** and go to **http://127.0.0.1:8000/docs**.
+3. Scroll to the **auth** section. Hanapin ang `POST /auth/create` and `POST /auth/signin`.
+
+**Expected:** Swagger UI loads with the available endpoints. If it doesn't, check the Electron terminal first.
+
+### Step 13 — Create a Student test account (AUTH-CREATE-01)
+
+1. Click **`POST /auth/create` → Try it out**.
+2. Swagger shows a JSON request body. **Keep all fields that Swagger requires**, based on the displayed schema. In particular, use:
+   - `id`: a unique **test Student ID** (e.g., `TEST-STU-001`; actual format may be validated by the API)
+   - `email`: a test email you control
+   - `password` and `confirm_password`: your own matching test password
+   - `user_type`: **`student` only**
+3. For other required fields (such as name), follow the schema shown in Swagger. Don't delete required fields.
+4. Click **Execute** **once**.
+5. Look at **Response code** and **Response body**.
+
+**Expected:** `201 Created` and a user response. If `409 Conflict`, the ID/email already exists—choose a new test ID/email rather than trying to overwrite someone else's account. For `422`, inspect which required field is missing or invalid. Don't post the password or complete request body in the group chat.
+
+**Important:** This creates the account in *your local SQLite database*, not in a shared online database. New accounts may be **unverified**; some pages may require email verification. The email placeholders in Step 6 cannot deliver verification emails.
+
+### Step 14 — Test Student login in Swagger (AUTH-STUDENT-API-01)
+
+1. Expand **`POST /auth/signin` → Try it out**.
+2. In the form, enter the **Student ID** from Step 13 in the `username` field (**not the email**).
+3. Enter the same password in `password`.
+4. Click **Execute**.
+
+**Expected:** `200 OK` with an `access_token` and `token_type`. **Never screenshot, copy to group chat, or share the token.** This confirms credentials work; it does **not** guarantee that all verified-user features are accessible.
+
+### Step 15 — Test Student login in the desktop app (AUTH-STUDENT-01)
+
+1. Return to TRACE Laboratory. If logged in as someone else, click **Logout**.
+2. On the Sign In screen, enter the **test Student ID** and password. The backend expects an ID, not an email; follow the actual UI labels if different and report any mismatch.
 3. Click **Sign In**.
-4. Check if successful ang login and kung may dashboard or appropriate admin pages.
-5. Take a screenshot of the result **without showing credentials**.
-6. Log out before testing another role.
+4. Check whether the Student dashboard opens. Try **Classrooms** and **Activities** if visible.
+5. Record errors such as `Unauthorized`, `403 Forbidden`, or a blank page. Log out when done.
 
-**Expected:** Admin account can sign in and see only the functions intended for its role. **If no approved Admin test account exists, mark `BLOCKED`, not `PASS`.**
+**Expected:** Login should succeed with valid credentials. Some pages may still be blocked if verification or classroom membership is required. Mark those features separately, not as a login failure.
 
-### Step 13 — Test Professor login (AUTH-PROF-01)
+### Step 16 — Test existing Admin account (AUTH-ADMIN-01)
 
-1. Sign in with the provided **Professor test account**.
-2. Check if dashboard loads.
-3. Open **Classrooms** and note whether classroom features appear.
-4. Open **Activities** and record any error.
+1. **Do not create an Admin using `POST /auth/create`.** Ask the maintainer for an approved, separately provisioned **local Admin test account** and its setup procedure.
+2. Log in using its **Admin/Employee ID** and password (not email).
+3. Check that the Admin page loads and record the visible menu options. **Do not assume a user list exists**; our earlier Admin test confirmed login but not a user-list feature.
+4. If the terminal shows `GET /activity/2 → 403 Forbidden`, note it as a **separate activity authorization issue**, even if the Admin page opens.
 5. Log out.
 
-**Expected:** Authorized pages load without crashes. If Activities shows `Unauthorized` or a gray/blank screen, mark **FAIL (known issue)** and record steps.
+**Expected:** Existing approved Admin credentials work. If no approved Admin test account exists on the groupmate's local database, mark **BLOCKED**, not FAIL.
 
-### Step 14 — Test Student login (AUTH-STUDENT-01)
+### Step 17 — Test existing Professor account (AUTH-PROF-01)
 
-1. Sign in with the provided **Student test account**.
-2. Check if dashboard loads.
-3. Open **Classrooms** and **Activities**, if available to this role.
-4. Check if student-only/role-appropriate content is displayed; do not assume students should have admin functions.
-5. Log out.
+1. Use a separately approved Professor test account; **don't create one through public registration**.
+2. Log in with the **Employee ID** and password.
+3. Check the dashboard, **Classrooms**, and **Activities** (if visible).
+4. Record `Unauthorized` or blank screens, then log out.
 
-**Expected:** Student can access authorized pages only. If no Student test account is provisioned, mark **BLOCKED**.
+**Expected:** Authorized pages work. If no approved Professor account exists, mark **BLOCKED**.
 
-### Step 15 — Wrong-password test (AUTH-NEG-01)
+### Step 18 — Wrong-password test (AUTH-NEG-01)
 
-1. Use an approved test account email.
-2. Type a deliberately incorrect password (not anyone's real password).
-3. Click **Sign In** once.
+1. On the Sign In screen, enter your own test Student ID.
+2. Type an intentionally incorrect password and click **Sign In once**.
+3. Record the result without sharing credentials.
 
-**Expected:** Login is rejected cleanly, without exposing stack traces or sensitive data. Don't repeatedly guess passwords.
+**Expected:** Login is rejected cleanly, without exposing sensitive information. Don't repeatedly guess passwords.
 
 ## PART 6 — Programming tab: actual TRACE tests
 
 **Important:** The current **Run** button does **not** execute what you typed in the editor. It starts a fixed Controller test script (`backend/test_execution.py`). The validation/demo features only support restricted literal `print()` statements. This is intentional for the current development test, not a full Python sandbox.
 
-### Step 16 — Open Programming (PROG-01)
+### Step 19 — Open Programming (PROG-01)
 
 1. Sign in with an approved account that can access Programming.
 2. Click **Programming** in the navigation.
@@ -201,7 +266,7 @@ npm run dev
 
 **Expected:** Programming page opens without a blank screen.
 
-### Step 17 — Type sample Python code (PROG-02)
+### Step 20 — Type sample Python code (PROG-02)
 
 Paste this into the editor:
 
@@ -211,7 +276,7 @@ print("Hello TRACE")
 
 Try **Save/Download** and save it as `hello_trace.py`. Then inspect the saved file. **Expected:** File extension is `.py` and content matches.
 
-### Step 18 — Upload the Python file (PROG-03)
+### Step 21 — Upload the Python file (PROG-03)
 
 1. Clear or change the editor text.
 2. Click **Upload/Open file** (use the actual label in your UI).
@@ -219,15 +284,15 @@ Try **Save/Download** and save it as `hello_trace.py`. Then inspect the saved fi
 
 **Expected:** Editor shows `print("Hello TRACE")` again.
 
-### Step 19 — Wrong file extension (PROG-04)
+### Step 22 — Wrong file extension (PROG-04)
 
 Try uploading a `.txt` file. **Expected:** App rejects it or shows a `.py`-only message. Record actual behavior.
 
-### Step 20 — Validate allowed code (PROG-05)
+### Step 23 — Validate allowed code (PROG-05)
 
 With `print("Hello TRACE")` in the editor, click **Validate** (or equivalent). **Expected:** Accepted by Controller when backend on port 8001 is running.
 
-### Step 21 — Validate disallowed code (PROG-06)
+### Step 24 — Validate disallowed code (PROG-06)
 
 Replace editor content with:
 
@@ -237,7 +302,7 @@ import os
 
 Click **Validate**. **Expected:** Rejected. This test is validation only; **do not attempt to run arbitrary imported code**.
 
-### Step 22 — Demo output (PROG-07)
+### Step 25 — Demo output (PROG-07)
 
 Restore:
 
@@ -247,7 +312,7 @@ print("Hello TRACE")
 
 Click the demo/execute-demo control if shown. **Expected:** Demo result includes `Hello TRACE`.
 
-### Step 23 — Test Run, output, and Stop (PROG-08 to PROG-10)
+### Step 26 — Test Run, output, and Stop (PROG-08 to PROG-10)
 
 1. Keep both backends running.
 2. Click **Run** once.
@@ -258,7 +323,7 @@ Click the demo/execute-demo control if shown. **Expected:** Demo result includes
 
 **Expected:** Fixed Controller test process starts and stops. **Do not claim the editor code was executed.**
 
-### Step 24 — Connection-loss test (NET-01/NET-02)
+### Step 27 — Connection-loss test (NET-01/NET-02)
 
 1. In **Terminal 2**, press **Ctrl+C** to stop Controller backend.
 2. Return to Programming and try **Validate** again.
@@ -270,15 +335,15 @@ Click the demo/execute-demo control if shown. **Expected:** Demo result includes
 
 ## PART 7 — Activities, camera, and build checks
 
-### Step 25 — Activities (ACT-01)
+### Step 28 — Activities (ACT-01)
 
 Sign in using an authorized test role, then open **Activities**. Record if it loads or shows `Unauthorized`, gray screen, or blank content. **Known issue:** This page previously failed. Mark **FAIL** if reproduced.
 
-### Step 26 — Camera navigation (CAM-01)
+### Step 29 — Camera navigation (CAM-01)
 
 If camera UI is available on your current setup, open it, navigate to another page, then return. Record whether the feed resumes. **Known issue:** Feed may stop after switching tabs. Do not connect a powered robotic arm for this test.
 
-### Step 27 — Optional frontend build check (BUILD-01)
+### Step 30 — Optional frontend build check (BUILD-01)
 
 Open another terminal:
 
@@ -311,6 +376,9 @@ For each test, use: **PASS** (gumagana), **FAIL** (may bug), **BLOCKED** (kulang
 | ENV-01 | Laboratory backend 8000 | | |
 | ENV-02 | Controller backend 8001 | | |
 | UI-01 | Frontend opens | | |
+| AUTH-API-01 | Swagger UI opens | | |
+| AUTH-CREATE-01 | Create local Student test account | | |
+| AUTH-STUDENT-API-01 | Student login through Swagger | | |
 | AUTH-ADMIN-01 | Admin login | | |
 | AUTH-PROF-01 | Professor login | | |
 | AUTH-STUDENT-01 | Student login | | |
@@ -346,11 +414,11 @@ Repository commit hash:
 - **GitHub 404:** Hindi pa accepted ang collaborator invite, wrong account, or wrong URL.
 - **`python` / `py -3.12` not found:** Install/check Python 3.12; run `py --list`.
 - **`npm` not recognized:** Install Node.js and reopen terminal.
-- **Backend fails to start:** Confirm you're in the correct `backend` folder, dependencies installed, and safe `.env` supplied for Laboratory.
-- **`Address already in use`:** May ibang process na gumagamit ng port 8000 or 8001. Stop the old process before retrying.
+- **Backend fails to start:** Confirm dependencies installed and `backend/.env` exists with valid settings. Remember placeholders do not make email/storage work.
+- **`Address already in use`:** Most likely two Laboratory backends were started (manual Uvicorn + Electron). Stop the manual one, then restart `npm run dev`.
 - **Programming cannot connect:** Check Terminal 2 and http://127.0.0.1:8001/.
 - **Activities says Unauthorized:** Record it; this is a known bug candidate.
-- **No admin/student login available:** Mark `BLOCKED` and ask for approved test accounts. **Don't enable old default admin setup.**
+- **No Admin/Professor login available:** Mark `BLOCKED` and ask for approved local provisioning. Student account can be created through Swagger for local tests. **Don't enable old default admin setup.**
 
 ## PART 11 — Pagkatapos ng testing
 
@@ -362,4 +430,4 @@ Repository commit hash:
 
 ## Notes para sa maintainer bago ipamigay sa groupmates
 
-This is a detailed **draft**, not yet a fully verified clean-PC installation procedure. Before asking everyone to follow it, prepare: (1) a sanitized local `.env.example` or private setup instructions; (2) approved test Admin, Professor, and Student accounts and a safe provisioning method; (3) confirmation that dependency installation works on a fresh PC; and (4) a screenshot or exact labels of the current Programming controls. Some UI labels and role permissions need to be checked against the running application. The known default password remains in historical Git commits; keep repositories private and never reuse that credential.
+This is a detailed **draft**, not yet a fully verified clean-PC installation procedure. Before asking everyone to follow it, prepare: (1) a committed, reviewed `.env.example` and verified local startup; (2) approved Admin/Professor provisioning and a fix for unrestricted privileged registration; (3) confirmation that dependency installation works on a fresh PC; and (4) a screenshot or exact labels of the current Programming controls. Some UI labels and role permissions need to be checked against the running application. The known default password remains in historical Git commits; keep repositories private and never reuse that credential.
