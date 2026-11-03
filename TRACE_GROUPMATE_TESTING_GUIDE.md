@@ -104,7 +104,9 @@ Kapag `False`, **stop muna and ask the maintainer to commit the reviewed `.env.e
 
 ```powershell
 $bytes = New-Object byte[] 32
-[System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
+$rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+$rng.GetBytes($bytes)
+$rng.Dispose()
 [Convert]::ToBase64String($bytes)
 ```
 
